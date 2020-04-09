@@ -1,9 +1,9 @@
 <?php 
 
 /**
- * @copyright   Copyright (C) 2019 Jeffrey Bostoen
+ * @copyright   Copyright (C) 2019-2020 Jeffrey Bostoen
  * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
- * @version     2019-10-28 13:58:34
+ * @version     2020-04-09 17:01:06
  *
  * Definition of LDAPSyncProcessor
  */
@@ -66,7 +66,7 @@ namespace jb_itop_extensions\ldap_sync;
 			// Each LDAP can have a different settings.
 			foreach($aSyncRules as $sIndex => $aSyncRule) {
 				
-				$aSyncRule = array_merge_recursive($aDefaultSyncRule, $aSyncRule);
+				$aSyncRule = array_replace_recursive($aDefaultSyncRule, $aSyncRule);
 				
 				try {
 					self::ProcessLDAP($sIndex, $aSyncRule);		
@@ -92,7 +92,7 @@ namespace jb_itop_extensions\ldap_sync;
 		 */
 		public function ProcessLDAP($sIndex, $aSyncRule) {
 			
-			$aKeys = ['host', 'port', 'default_user', 'default_pwd', 'base_dn', 'start_tls', 'options', 'ldap_attributes'];
+			$aKeys = ['host', 'port', 'default_user', 'default_pwd', 'base_dn', 'start_tls', 'options', 'ldap_attributes', 'create_objects', 'update_objects'];
 			
 			// Check if there's enough info to connect to an LDAP
 			foreach($aKeys as $sKey) {
@@ -105,7 +105,6 @@ namespace jb_itop_extensions\ldap_sync;
 			if(is_array($aSyncRule['options']) == false) {
 				$this->Throw('Error: sync rule (index '.$sIndex.'): "options" expects an array');
 			}
-			
 			
 			// Create objects as needed
 			foreach($aSyncRule['objects'] as $sIndex => $aObject) {
@@ -220,6 +219,12 @@ namespace jb_itop_extensions\ldap_sync;
 					
 					switch($oSet->Count()) {
 						case 0:
+						
+							if($aSyncRule['create_objects'] != true) {
+								$this->Trace('... Not creating object, create_object is not set to true');
+								break;
+							}
+						
 							// Create
 							$this->Trace('... Create ' . $oSet->GetClass());
 							
@@ -258,6 +263,11 @@ namespace jb_itop_extensions\ldap_sync;
 							
 						case 1:
 						
+							if($aSyncRule['update_objects'] != true) {
+								$this->Trace('... Not update object, update_object is not set to true');
+								break;
+							}
+							
 							// Update							
 							$this->Trace('... Update ' . $oSet->GetClass());
 							

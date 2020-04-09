@@ -2,7 +2,7 @@
 
 ## Special note
 This extension was complex to develop and is now very feature rich, so this became a professional extension.
-If you want to use this extension and get support, get in touch please to discuss terms: jbostoen.itop@outlook.com
+If you want to use this extension and get support, please get in touch to discuss the terms: **jbostoen.itop@outlook.com**
 
 
 ## What?
@@ -98,7 +98,10 @@ It's possible to specify both default settings and override them for any given c
 # Roadmap
 * Search bar (locate addresses)
 
+## Translations
+* French translation by Guillaume Lajarige (@Molkobain)
+
 ## License
 https://www.gnu.org/licenses/gpl-3.0.en.html
-Copyright (C) 2019 Jeffrey Bostoen
+Copyright (C) 2019-2020 Jeffrey Bostoen
 

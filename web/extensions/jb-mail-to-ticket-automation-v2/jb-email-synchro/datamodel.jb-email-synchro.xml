@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.6">
+	<!-- Leave this untouched -->
   <classes>
     <class id="MailInboxBase" _delta="define">
       <php_parent>
@@ -672,15 +673,6 @@ EOF
 				// Here for compatibility with original Combodo Mail to Ticket Automation configuration
 				self::$aExcludeAttachments = MetaModel::GetModuleSetting('jb-email-synchro', 'exclude_attachment_types', array());
 				
-				// Subclass of MailInboxBase?
-				if(is_a($this, 'MailInboxStandard') == true) {
-					$sForbiddenMimeTypes = $this->Get('policy_forbidden_attachments_mimetypes');
-					if($sForbiddenMimeTypes != '' ) {
-						$aForbiddenMimeTypes = preg_split('/\\r\\n|\\r|\\n/', $sForbiddenMimeTypes);
-					}
-					self::$aExcludeAttachments = array_merge(self::$aExcludeAttachments, $aForbiddenMimeTypes);
-				}
-				
 			}
 			if (!in_array($aAttachment['mimeType'], self::$aExcludeAttachments))
 			{
@@ -993,9 +985,9 @@ EOF
 	 * @param hash $aValues The values to set attcode => value
 	 */]]></comment>
           <static>false</static>
-          <access>protected</access>
+          <access>public</access>
           <type>Overload-DBObject</type>
-          <code><![CDATA[	protected function InitObjectFromDefaultValues($oObj, $aValues)
+          <code><![CDATA[	public function InitObjectFromDefaultValues($oObj, $aValues)
 	{
 		foreach($aValues as $sAttCode => $value)
 		{

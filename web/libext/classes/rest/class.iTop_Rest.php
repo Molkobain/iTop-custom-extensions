@@ -1,14 +1,13 @@
 <?php
 
 /**
- * @copyright   Copyright (C) 2019 Jeffrey Bostoen
+ * @copyright   Copyright (C) 2019-2020 Jeffrey Bostoen
  * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
- * @version     -
+ * @version     2020-04-09 17:01:06
  * @see         https://www.itophub.io/wiki/page?id=latest%3Aadvancedtopics%3Arest_json
  *
  * Defines class iTop_Rest, which communicates with iTop REST/JSON API
  *
- * @details
  * 
  */
  
@@ -56,7 +55,7 @@
 		public $version = '1.3';
 		
 		
-		public function __construct( ) {
+		public function __construct() {
 
 			// If url is unspecified by default and this file is placed within iTop-directory as expected, the url property will automatically be adjusted
 			if($this->url == '') {
@@ -64,11 +63,15 @@
 				// Assume we're in iTop directory; get definitions for APPCONF and ITOP_DEFAULT_ENV
 				$sDirName = __DIR__ ;
 				
-				while( $sDirName != dirname($sDirName) ) {
+				while($sDirName != dirname($sDirName)) {
 					
-					if( file_exists( $sDirName . '/approot.inc.php' ) == true ) {
+					$sFile = $sDirName.'/approot.inc.php';
+					if(file_exists($sFile) == true ) {
 
-						require_once( $sDirName . '/approot.inc.php');
+						// Compatibility with iTop 2.7; NOT loading Twig etc. Defaults!
+						defined('APPROOT') || define('APPROOT', dirname($sFile).'/');
+						defined('APPCONF') || define('APPCONF', APPROOT.'conf/');
+						defined('ITOP_DEFAULT_ENV') || define('ITOP_DEFAULT_ENV', 'production');
 						
 						// Get iTop config file 
 						if( file_exists( APPCONF . ITOP_DEFAULT_ENV . '/config-itop.php') == true ) {
@@ -88,7 +91,7 @@
 				}
 				
 				// return hasn't happened: this means we have an error here.
-				throw new Exception('Could not automatically derive iTop Rest/JSON url');
+				throw new \Exception('Could not automatically derive iTop Rest/JSON url');
 				
 			}
 		}
@@ -188,7 +191,7 @@
 		 * @return Array - see processResult()
 		 * 
 		 */ 
-		public function Get( Array $aParameters = [] ) {
+		public function Get(Array $aParameters = []) {
 			
 			$sClassName = $this->GetClassName( $aParameters );
 			 			
@@ -210,7 +213,7 @@
 		 * @return String $sInput Class name.
 		 *
 		 */
-		private function GetClassName( Array $aInput = [] ) {
+		private function GetClassName(Array $aInput = []) {
 							
 			if( isset( $aInput['class'] ) == true ) {
 				
@@ -234,7 +237,7 @@
 				
 			}
 			
-			throw new Exception('Error in ' . __METHOD__ . '(): class was not defined and it could also not be derived from key.');
+			throw new \Exception('Error in ' . __METHOD__ . '(): class was not defined and it could also not be derived from key.');
 			
 		}
 
@@ -248,8 +251,8 @@
 		 * 
 		 * @return Array containing the data obtained from the iTop REST Services
 		 */ 
-		public function Post( Array $aJSONData ) {
-			   
+		public function Post(Array $aJSONData = []) {
+			
 			//  Initiate curl
 			$ch = curl_init();
 			 
@@ -260,20 +263,19 @@
 			
 
 			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-			curl_setopt($ch, CURLOPT_USERPWD, $this->user . ':' . $this->password );
+			curl_setopt($ch, CURLOPT_USERPWD, $this->user . ':' . $this->password);
 
 			 
 			// Set the url
-			curl_setopt($ch, CURLOPT_URL, $this->url );
+			curl_setopt($ch, CURLOPT_URL, $this->url);
 			
 			// You need to use URL encode here. If you don't, you might end up with issues. A base64 string easily includes plus signs which need to be escaped
 			$sPostString = ''.
 				'&version='.$this->version.
 				'&auth_user='.$this->user.
 				'&auth_pwd='.$this->password.
-				'&json_data='.urlencode(json_encode( $aJSONData ));
-			 
-				
+				'&json_data='.urlencode(json_encode($aJSONData));
+	
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $sPostString);                                                                  
 			curl_setopt($ch, CURLOPT_HTTPHEADER, [                                                                                
 				'Content-Length: ' . strlen($sPostString)                                                                       
@@ -283,22 +285,20 @@
 				echo 'Request:' . PHP_EOL .json_encode($aJSONData, JSON_PRETTY_PRINT ); 				
 			}
 			
-						
 			// Execute
 			$sResult = curl_exec($ch);
-			 			
 			
 			// Closing
 			curl_close($ch);
   
-			if( $this->showResponse == true ) { 
+			if($this->showResponse == true) { 
 				echo 'Response: ' . PHP_EOL  .$sResult;  
 			}
 			
 			$aResult = json_decode($sResult, true);
 			
 			if(is_array($aResult) == false || isset($aResult['code']) == false){
-				throw new Exception('Invalid response from iTop API/REST. Incorrect configuration or something wrong with network or iTop?');
+				throw new \Exception('Invalid response from iTop API/REST. Incorrect configuration or something wrong with network or iTop?');
 			}
     
 			return $aResult; 
@@ -317,7 +317,7 @@
 		 *  'filename'        => Filename (short)
 		 * ];
 		 */ 
-		public function PrepareFile( String $sFileName ) {
+		public function PrepareFile(String $sFileName) {
 			
 			$sFileName = $sFileName;
 			$sType = mime_content_type($sFileName);
@@ -372,18 +372,18 @@
 		 * @details Simplification happens because we only return an array of objects, either with or without key. 
 		 * If you want to check for errors, just check in the array if 'code' still exists.
 		 */
-		private function ProcessResult( Array $aServiceResponse = [], Array $aParameters = [] ) {
+		private function ProcessResult(Array $aServiceResponse = [], Array $aParameters = []) {
 			
 			// Valid response ('code' = 0)
 			if( isset( $aServiceResponse['code'] ) == true && $aServiceResponse['code'] == 0 ) {
 								
 				// Valid call, no results? (usually after 'operation/get'
-				if( isset( $aServiceResponse['objects'] ) == false ) {
+				if(isset($aServiceResponse['objects'] ) == false) {
 					return [];
 				}
 				else {
 					$aObjects = $aServiceResponse['objects'];
-					return ( isset( $aParameters['no_keys']) == true ? ( $aParameters['no_keys'] == true ? array_values($aObjects) : $aObjects ) : $aObjects );
+					return (isset( $aParameters['no_keys']) == true ? ( $aParameters['no_keys'] == true ? array_values($aObjects) : $aObjects ) : $aObjects);
 				}
 			}
 			else {
@@ -392,7 +392,7 @@
 				// Return all.
 				if( isset($aServiceResponse['code']) == true && isset($aServiceResponse['message']) == true ) {
 					// Valid response but error
-					throw new \iTop_Rest_Exception('Invalid response from iTop REST/JSON Service: '.$aServiceResponse['message'], $aServiceResponse, $aServiceResponse['code']);
+					throw new \iTop_Rest_Exception('Invalid response from iTop REST/JSON Service: '.$aServiceResponse['message'], $aServiceResponse['code'], null, $aServiceResponse);
 				}
 				else {
 					// Invalid response
@@ -423,7 +423,7 @@
 		 * @return Array - see processResult()
 		 *
 		 */ 
-		public function Update( Array $aParameters = [] ) {
+		public function Update(Array $aParameters = []) {
 			
 			$sClassName = $this->GetClassName( $aParameters );
 			

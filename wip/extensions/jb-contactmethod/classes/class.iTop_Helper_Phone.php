@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @copyright   Copyright (C) 2019 Jeffrey Bostoen
+ * @copyright   Copyright (C) 2019-2020 Jeffrey Bostoen
  * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
- * @version     2019-08-22 12:47:48
+ * @version     2020-04-09 17:01:06
  * @experimental
  *
  * Defines class jb_itop_extensions\helpers\phone, which offers some methods to validate phone numbers. 

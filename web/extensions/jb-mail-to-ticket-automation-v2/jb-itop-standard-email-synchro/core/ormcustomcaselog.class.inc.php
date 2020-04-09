@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @copyright   Copyright (C) 2019 Jeffrey Bostoen
+ * @copyright   Copyright (C) 2019-2020 Jeffrey Bostoen
  * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
- * @version     2019-11-01 17:26:09
+ * @version     2020-04-09 17:01:06
  *
  * Custom version of ormCaseLog.
  * Extended AddLogEntry() to support on_behalf_of_user_id (rather than just 'on_behalf_of'). 

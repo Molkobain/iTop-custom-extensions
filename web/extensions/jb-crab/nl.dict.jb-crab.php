@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright   Copyright (C) 2019 Jeffrey Bostoen
+ * @copyright   Copyright (C) 2019-2020 Jeffrey Bostoen
  * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
  *
  * Localized data
@@ -10,8 +10,9 @@
 Dict::Add('NL NL', 'Dutch', 'Dutch', array(
 
 	// Crab City	 
-	'Class:CrabCity' => 'Naam',
-	'Class:CrabCity+' => 'Officiële naam',
+	'Class:CrabCity' => 'Crab-gemeente',
+	'Class:CrabCity/Attribute:name' => 'Naam',
+	'Class:CrabCity/Attribute:name+' => 'Officiële naam',
 	'CrabCity:baseinfo' => 'Algemene info',
 	
 	'Class:CrabCity/Attribute:streets_list' => 'Stratenlijst',
@@ -28,16 +29,19 @@ Dict::Add('NL NL', 'Dutch', 'Dutch', array(
 	'Class:CrabStreet/Attribute:name' => 'Straatnaam',
 	'Class:CrabStreet/Attribute:name+' => 'Straatnaam',
 	
+	'Class:CrabStreet/Attribute:city_id' => 'Gemeente',
+	'Class:CrabStreet/Attribute:city_id+' => 'Gemeente',
+	
 	'Class:CrabStreet/Attribute:status' => 'Status',
 	'Class:CrabStreet/Attribute:status+' => 'Status',
 	
 	'Class:CrabAddress/Attribute:geom' => 'Geometrie',
 	'Class:CrabAddress/Attribute:geom+' => 'XY-coördinaten',
 	
-	'Class:CrabStreet/Attribute:status/Value:1' => 'voorgesteld',
-	'Class:CrabStreet/Attribute:status/Value:2' => 'gereserveerd',
-	'Class:CrabStreet/Attribute:status/Value:3' => 'in gebruik',
-	'Class:CrabStreet/Attribute:status/Value:4' => 'niet meer in gebruik', 
+	'Class:CrabStreet/Attribute:status/Value:1' => 'Voorgesteld',
+	'Class:CrabStreet/Attribute:status/Value:2' => 'Gereserveerd',
+	'Class:CrabStreet/Attribute:status/Value:3' => 'In gebruik',
+	'Class:CrabStreet/Attribute:status/Value:4' => 'Niet meer in gebruik', 
 	 
 	'Class:CrabStreet/Attribute:addresses_list' => 'Adreslijst',
 	'Class:CrabStreet/Attribute:addresses_list+' => 'Adreslijst',
@@ -71,12 +75,12 @@ Dict::Add('NL NL', 'Dutch', 'Dutch', array(
 	'Class:CrabAddress/Attribute:status' => 'Status',
 	'Class:CrabAddress/Attribute:status+' => 'Status',
 	
-	'Class:CrabAddress/Attribute:status/Value:1' => 'voorgesteld',
-	'Class:CrabAddress/Attribute:status/Value:2' => 'gereserveerd',
-	'Class:CrabAddress/Attribute:status/Value:3' => 'in gebruik',
-	'Class:CrabAddress/Attribute:status/Value:4' => 'niet meer in gebruik', 
-	'Class:CrabAddress/Attribute:status/Value:5' => 'onofficieel', 
-	'Class:CrabAddress/Attribute:status/Value:99' => 'niet meer in dataset Vlaanderen', 
+	'Class:CrabAddress/Attribute:status/Value:1' => 'Voorgesteld',
+	'Class:CrabAddress/Attribute:status/Value:2' => 'Gereserveerd',
+	'Class:CrabAddress/Attribute:status/Value:3' => 'In gebruik',
+	'Class:CrabAddress/Attribute:status/Value:4' => 'Niet meer in gebruik', 
+	'Class:CrabAddress/Attribute:status/Value:5' => 'Onofficieel', 
+	'Class:CrabAddress/Attribute:status/Value:99' => 'Niet meer in dataset Vlaanderen', 
 	 
 	'Class:Location/Attribute:geom' => 'Geometrie', 
 	

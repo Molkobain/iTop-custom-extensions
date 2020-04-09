@@ -1,6 +1,12 @@
 # Warning
-Currently working on v2.
-For people who like to play safe: v1 is included in the ZIP file.
+Currently working on version 2.
+Work in progress; for now: use version 1 which is included in the ZIP file.
+
+
+## Special note
+This extension was complex to develop and is now very feature rich, yet it remains a free extension.
+If you want to use this extension and get support or custom development, get in touch please to discuss terms: **jbostoen.itop@outlook.com**
+
 
 # What?
 
@@ -9,10 +15,21 @@ It was originally based on their version 3.0.7 (28th of August 2017), but also i
 Some fixes in this version were accepted by Combodo back in August 2018 and are now part of the official version.
 
 What is different? In a few cases, Combodo's implementation of Mail to Ticket Automation was not sufficient enough. 
-This extension offers some additional policies that can be enforced and also adds a few automated actions if those policies are violated.
-For example, it's possible to force callers to NOT have other recipients in the message sent to the helpdesk.
+This extension works in steps. Those steps are called **policies** and they **can** do two things: 
 
-One thing is important here: it's actually recommended to set **use_message_id_as_uid** to 'true' in the config file in a lot of cases to avoid duplicates (Combodo sets it to 'false' by default but this could be very undesired for IMAP connections!). Otherwise, configuration settings are mostly similar to https://www.itophub.io/wiki/page?id=extensions%3Aticket-from-email
+* **determine if further processing should be blocked**
+  * Examples: bouncing emails without subjects, with other people as recipient, ...
+* **perform an automated action**
+  * Examples: determining and linking additional contacts, saving emails to a folder, ...
+  * Info should only be set by one policy. That's why some of the default policies check whether some information (such as related contacts) hasn't been set yet.  
+
+
+# Configuration
+
+Configuration settings are mostly similar to https://www.itophub.io/wiki/page?id=extensions%3Aticket-from-email
+
+One thing is important here: it's actually recommended to set **use_message_id_as_uid** to 'true' in the config file in a lot of cases to avoid duplicates 
+(Combodo sets it to 'false' by default but this could be very undesired for IMAP connections!). 
 
 For IMAP, here's a quick example on the configuration options (config-itop.php).
 Also make sure the PHP IMAP extension is enabled.
@@ -25,16 +42,20 @@ Also make sure the PHP IMAP extension is enabled.
 	),
 ```
 
-# Roadmap
-Short term roadmap: this was my first PHP extension (fork) for iTop.
-Initially for a minor problem only, but it grew over time. It works, but the code is not "by the book". 
-Expect some refactoring soon; while keeping the current options and datamodel.
+
+# Roadmap and history
+Short term roadmap: this was my first PHP extension (fork) for iTop, somewhere in 2015.
+Initially for a minor improvement only, but it grew over time. It works, but the code was not "by the book".
+
+At the end of 2019, a refactoring attempt is being made. 
+It will keep the current options and datamodel.
 
 Also expect an **optional** link to the **ContactMethod** class you find in this repository, so a caller can have multiple e-mail addresses.
 
 Other new features may be proposed, but are currently not planned.
 
 Password field will be reviewed.
+
 
 # Basics about policies
 Common options are:
@@ -105,8 +126,8 @@ This handles technical issues with e-mails; not policy violations.
 ***
 
 # Available policies
-A list of included policies which can be configured.
-With some programming skills, it's easy to extend the *PolicyViolation* class.
+A list of included policies which have settings that can be edited in the MailBox configuration.
+With some programming skills, it's easy to implement your own policy (see further in this document).
 If it's a common use case, make a pull request to include it.
 
 ## E-mail Size
@@ -121,7 +142,7 @@ If it's a common use case, make a pull request to include it.
 * **Bounce message**
 * **Max size (MB)** - default is 10 MB
  
-## Forbidden attachments
+## Attachment - forbidden mime types
 * Use case: you might not want .exe attachments
 * **Policy violation behavior**
   * Bounce to sender and delete
@@ -133,7 +154,15 @@ If it's a common use case, make a pull request to include it.
 * **Bounce subject**
 * **Bounce message**
 * **MIME Types** - one per line. Example: application/exe
-	 
+	
+## Attachment - image dimensions
+* Use case: ignoring images which are too small (likely part of e-mail signatures) or resize images which are too big.
+* Requires php-gd
+* **Min width**
+* **Max width**
+* **Min height**
+* **Max height**
+ 
 ## No subject
 * Use case: you want to enforce people to at least supply a subject.
 * **Policy violation behavior**
@@ -247,6 +276,7 @@ If it's a common use case, make a pull request to include it.
 ## Minor code tweaks
 Some code was simplified.
 
+Also more flexible in title patterns (no regex group required).
 
 ## Lost IMAP connections
 There's an attempt to fix issues with lost IMAP connections (to Office 365).
@@ -259,4 +289,18 @@ If in the next run the IMAP connection functions properly, the e-mail would be r
 # Cookbook
 
 PHP
-- how to implement renaming of columns, running queries during installation (ModuleInstallerAPI)
+* how to rename value enums by running queries during installation (ModuleInstallerAPI)
+* how to columns value enums by running queries during installation (ModuleInstallerAPI)
+
+# Creating new additional policies
+Enforcing certain rules or simply adding your own basic logic to set Ticket info or derive a caller (Person) can be done by writing your own class implementing the **iPolicy** interface.
+
+The most important things about the interface:
+* implement the ```Init()``` method
+* specify a ```$iPrecedence``` method.
+  * This is the order in which policies are executed. Lower = first, higher  = later. 
+  * Not necessary to make this unique.
+  * $iPrecedence = 200 is used for ticket creation/update.
+* implement the ```IsCompliant()``` method. true = continue processing; false = stop processing this email (marked as undesired)
+
+

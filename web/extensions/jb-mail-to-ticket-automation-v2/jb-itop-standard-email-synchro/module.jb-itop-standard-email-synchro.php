@@ -5,7 +5,7 @@
 
 SetupWebPage::AddModule(
 	__FILE__, // Path to the current file, all other file names are relative to the directory containing this file
-	'jb-itop-standard-email-synchro/2.6.191101',
+	'jb-itop-standard-email-synchro/2.6.200409',
 	array(
 		// Identification
 		//
@@ -15,6 +15,7 @@ SetupWebPage::AddModule(
 		// Setup
 		//
 		'dependencies' => array(
+			'jb-framework/2.6.191216',
 			'jb-email-synchro/2.6.190110',
 			// no other dependency is listed, for backward 1.x compatibility... though this module uses implicitely the Ticket's derived classes...
 		),
@@ -26,7 +27,6 @@ SetupWebPage::AddModule(
 		//
 		'datamodel' => array(
 			'model.jb-itop-standard-email-synchro.php',
-			'core/ormcustomcaselog.class.inc.php',
 			'core/policy.class.inc.php',
 		),
 		'webservice' => array(
@@ -82,6 +82,13 @@ if (!class_exists('StandardEmailSynchroInstaller')) {
 			self::RenameEnumValueInDB('MailInboxStandard', 'policy_other_recipients_behavior', 'add_existing_contacts', 'fallback_add_existing_other_contacts');
 			self::RenameEnumValueInDB('MailInboxStandard', 'policy_remove_pattern_behavior', 'remove', 'fallback_remove');
 			self::RenameEnumValueInDB('MailInboxStandard', 'policy_remove_pattern_behavior', 'ignore', 'do_nothing'); // Should actually be translated to policy_ignore_pattern
+			
+			// 20191229-1549: renamed policy
+			self::MoveColumnInDB('MailInboxStandard', 'policy_forbidden_attachments_behavior', 'MailInboxStandard', 'policy_attachment_forbidden_mimetype_behavior');
+			self::MoveColumnInDB('MailInboxStandard', 'policy_forbidden_attachments_subject', 'MailInboxStandard', 'policy_attachment_forbidden_mimetype_subject');
+			self::MoveColumnInDB('MailInboxStandard', 'policy_forbidden_attachments_notification', 'MailInboxStandard', 'policy_attachment_forbidden_mimetype_notification');
+			self::MoveColumnInDB('MailInboxStandard', 'policy_forbidden_attachments_mimetypes', 'MailInboxStandard', 'policy_attachment_forbidden_mimetype_mimetypes');
+			
 			
 		}
 		

@@ -2,6 +2,7 @@
 
 ## What
 An attempt at converting our inventory of leisure passes and checks from a legacy program to iTop.
+( we worked around this, leaving this example as a test case )
 
 Stuck due to a bug in iTop.
 
@@ -19,5 +20,5 @@ Would work in iTop, additional fixes might be needed for export. Unfortunately, 
 
 ## License
 https://www.gnu.org/licenses/gpl-3.0.en.html
-Copyright (C) 2019 Jeffrey Bostoen
+Copyright (C) 2019-2020 Jeffrey Bostoen
 
